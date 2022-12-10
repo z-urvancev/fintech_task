@@ -1,6 +1,8 @@
 package impl
 
 import (
+	"database/sql"
+	"fintech/pkg/errors"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -13,45 +15,31 @@ func NewPostgresRepo(db *sqlx.DB) *PostgresRepo {
 }
 
 func (pg *PostgresRepo) GetByShort(short string) (string, error) {
-	stmt, psErr := pg.db.Prepare(`SELECT url FROM links WHERE short=?`)
-	if psErr != nil {
-		return "", psErr
-	}
+	query := `SELECT short FROM links WHERE url=$1`
+	row := pg.db.QueryRow(query, short)
 	var result string
-	row := stmt.QueryRow(short)
-	if row.Err() != nil {
-		return "", row.Err()
+	err := row.Scan(&result)
+	if err == sql.ErrNoRows {
+		return "", errors.ErrURLNotFound
 	}
-
-	scanErr := row.Scan(&result)
-	if scanErr != nil {
-		return "", scanErr
-	}
-	return result, nil
+	return result, err
 }
 
 func (pg *PostgresRepo) GetByURL(url string) (string, error) {
-	stmt, psErr := pg.db.Prepare(`SELECT short FROM links WHERE url=?`)
-	if psErr != nil {
-		return "", psErr
+	query := `SELECT short FROM links WHERE url=$1`
+	row := pg.db.QueryRow(query, url)
+	var short string
+	err := row.Scan(&short)
+	if err == sql.ErrNoRows {
+		return "", errors.ErrURLNotFound
 	}
-	var result string
-	row := stmt.QueryRow(url)
-	if row.Err() != nil {
-		return "", row.Err()
-	}
-
-	scanErr := row.Scan(&result)
-	if scanErr != nil {
-		return "", scanErr
-	}
-	return result, nil
+	return short, err
 }
 
 func (pg *PostgresRepo) Insert(url, short string) error {
-	insertSchema := `INSERT INTO links (url, short) VALUES (?, ?)`
-	_, err := pg.db.Exec(insertSchema, url, short)
-	if err != nil {
+	query := `INSERT INTO links (short, url) values ($1, $2) RETURNING id`
+	_, err := pg.db.Exec(query, short, url)
+	if err != nil && err != sql.ErrNoRows {
 		return err
 	}
 	return nil

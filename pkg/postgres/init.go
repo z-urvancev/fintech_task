@@ -4,6 +4,7 @@ import (
 	"fintech/config"
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
 func NewPostgresDB(cfg *config.DBConfig) (*sqlx.DB, error) {

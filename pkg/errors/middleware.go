@@ -8,7 +8,7 @@ func Middleware() gin.HandlerFunc {
 			c.Next()
 			err := c.Errors.Last()
 			result := gin.H{"error": err.Error()}
-			c.AbortWithStatusJSON(ConvertError(err), result)
+			c.AbortWithStatusJSON(ConvertError(err.Err), result)
 		}
 	}
 }

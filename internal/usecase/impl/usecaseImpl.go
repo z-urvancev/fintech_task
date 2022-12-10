@@ -15,6 +15,10 @@ func NewUseCase(repository repository.Repository) *UseCaseImpl {
 }
 
 func (u *UseCaseImpl) GetURLByShort(short string) (string, error) {
+	if short == "" {
+		return "", errors.ErrBadRequest
+	}
+
 	url, getErr := u.repository.GetByShort(short)
 	if getErr != nil {
 		return "", getErr
@@ -24,18 +28,18 @@ func (u *UseCaseImpl) GetURLByShort(short string) (string, error) {
 }
 
 func (u *UseCaseImpl) GenerateShortURL(url string) (string, error) {
+	if url == "" {
+		return "", errors.ErrBadRequest
+	}
+
 	_, getErr := u.repository.GetByURL(url)
 	if getErr == nil {
 		return "", errors.ErrAlreadyAbbreviated
-	}
-	if getErr != errors.ErrURLNotFound {
+	} else if getErr != errors.ErrURLNotFound {
 		return "", getErr
 	}
 
-	short, abbreviateErr := abbreviator.Generate()
-	if abbreviateErr != nil {
-		return "", abbreviateErr
-	}
+	short := abbreviator.Generate()
 
 	insertErr := u.repository.Insert(url, short)
 	if insertErr != nil {

@@ -9,13 +9,17 @@ import (
 var abbreviateMap = map[string]struct{}{}
 var acceptableSymbols = "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_"
 
-func Generate() (string, error) {
+func Generate() string {
 	rand.Seed(time.Now().UnixNano())
-	ok := true
+	var (
+		ok     = true
+		result = ""
+	)
 	for ok {
-		_, ok = abbreviateMap[generateShortUrl()]
+		result = generateShortUrl()
+		_, ok = abbreviateMap[result]
 	}
-	return "", nil
+	return result
 }
 
 func generateShortUrl() string {

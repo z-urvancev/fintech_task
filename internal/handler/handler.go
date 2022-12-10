@@ -16,14 +16,8 @@ func NewHandler(useCase usecase.UseCase) *Handler {
 }
 
 func (h *Handler) GetURLByShort(c *gin.Context) {
-	input := struct {
-		short string
-	}{}
-	if err := c.BindJSON(&input); err != nil {
-		_ = c.Error(errors.ErrBadRequest)
-		return
-	}
-	url, getErr := h.useCase.GetURLByShort(input.short)
+	short := c.Param("short")
+	url, getErr := h.useCase.GetURLByShort(short)
 	if getErr != nil {
 		_ = c.Error(getErr)
 		return
@@ -34,13 +28,13 @@ func (h *Handler) GetURLByShort(c *gin.Context) {
 
 func (h *Handler) GenerateShortURL(c *gin.Context) {
 	input := struct {
-		url string
+		URL string `json:"url"`
 	}{}
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errors.ErrBadRequest)
 		return
 	}
-	short, generateErr := h.useCase.GenerateShortURL(input.url)
+	short, generateErr := h.useCase.GenerateShortURL(input.URL)
 	if generateErr != nil {
 		_ = c.Error(generateErr)
 		return

@@ -14,7 +14,7 @@ func InitRoutes(h *handler.Handler) *gin.Engine {
 	})
 
 	router.POST("/", h.GenerateShortURL, errors.Middleware())
-	router.GET("/", h.GetURLByShort, errors.Middleware())
+	router.GET("/:short", h.GetURLByShort, errors.Middleware())
 
 	return router
 }

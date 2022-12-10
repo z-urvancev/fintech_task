@@ -2,6 +2,7 @@ package errors
 
 import (
 	"errors"
+	"log"
 	"net/http"
 )
 
@@ -11,6 +12,7 @@ var (
 	ErrURLNotFound        = errors.New("URL не найден")
 	ErrIncorrectStoreType = errors.New("Неизвестный тип хранилища")
 )
+
 var errorToCode = map[error]int{
 	ErrBadRequest:         http.StatusBadRequest,
 	ErrAlreadyAbbreviated: http.StatusBadRequest,
@@ -19,6 +21,7 @@ var errorToCode = map[error]int{
 
 func ConvertError(err error) int {
 	result, ok := errorToCode[err]
+	log.Println(ok)
 	if ok {
 		return result
 	}

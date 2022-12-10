@@ -1,7 +1,7 @@
 port: ":8080"
 db:
-  username: "jobflowAdmin"
-  host: "jfPostgres"
+  username: "fintechAdmin"
+  host: "fintechPostgres"
   port: "5432"
-  dbname: "jobflowDB"
+  dbname: "fintechDB"
   sslmode: "disable"
