@@ -17,11 +17,14 @@
 - Метод Get, который будет принимать сокращённый URL и возвращать оригинальный
 
 <h3>Запуск</h3>
+<b>Запуск Миграции базы данных:</b>
 
-Запуск API с in-memory-хранилищем:
+`make migration`
 
-`docker compose -f inMemory.yml  up -d`
+<b>Запуск API с in-memory-хранилищем:</b>
 
-Запуск API с PostgreSQL:
+`make inMemory` или `docker compose -f inMemory.yml  up -d`
 
-`docker compose -f postgres.yml  up -d`
+<b>Запуск API с PostgreSQL:</b>
+
+`make postgres` или `docker compose -f postgres.yml  up -d`
