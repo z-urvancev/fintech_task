@@ -1,5 +1,3 @@
-ARG store_type
-
 FROM golang:alpine as builder
 WORKDIR /server
 COPY . .
@@ -10,4 +8,6 @@ WORKDIR /server
 COPY --from=builder /server/main /server/main
 COPY --from=builder /server/.env /server/.env
 COPY --from=builder /server/config/config.yml /server/config/config.yml
-CMD ["./main", "--store_type=${store_type}"]
+ARG store_type
+ENV store_type ${store_type}
+CMD ./main --store_type ${store_type}
