@@ -39,8 +39,10 @@ func (u *UseCaseImpl) GenerateShortURL(url string) (string, error) {
 		return "", getErr
 	}
 
-	short := abbreviator.Generate()
-
+	short, abbreviateErr := abbreviator.Generate()
+	if abbreviateErr != nil {
+		return "", abbreviateErr
+	}
 	insertErr := u.repository.Insert(url, short)
 	if insertErr != nil {
 		return "", insertErr

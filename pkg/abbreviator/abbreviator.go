@@ -1,6 +1,7 @@
 package abbreviator
 
 import (
+	"fintech/pkg/errors"
 	"math/rand"
 	"strings"
 	"time"
@@ -9,17 +10,22 @@ import (
 var abbreviateMap = map[string]struct{}{}
 var acceptableSymbols = "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_"
 
-func Generate() string {
+func Generate() (string, error) {
 	rand.Seed(time.Now().UnixNano())
 	var (
-		ok     = true
-		result = ""
+		ok       = true
+		result   = ""
+		attempts = 0
 	)
-	for ok {
+	for ok && attempts < 10 {
 		result = generateShortUrl()
 		_, ok = abbreviateMap[result]
+		attempts++
 	}
-	return result
+	if attempts == 10 {
+		return "", errors.ErrCannotGenerateShort
+	}
+	return result, nil
 }
 
 func generateShortUrl() string {
