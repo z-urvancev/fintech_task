@@ -15,8 +15,14 @@ func NewPostgresRepo(db *sqlx.DB) *PostgresRepo {
 }
 
 func (pg *PostgresRepo) GetByShort(short string) (string, error) {
-	query := `SELECT short FROM links WHERE url=$1`
-	row := pg.db.QueryRow(query, short)
+	query := `SELECT url FROM links WHERE short=$1`
+
+	state, stateErr := pg.db.Prepare(query)
+	if stateErr != nil {
+		return "", stateErr
+	}
+	row := state.QueryRow(short)
+
 	var result string
 	err := row.Scan(&result)
 	if err == sql.ErrNoRows {
@@ -27,7 +33,13 @@ func (pg *PostgresRepo) GetByShort(short string) (string, error) {
 
 func (pg *PostgresRepo) GetByURL(url string) (string, error) {
 	query := `SELECT short FROM links WHERE url=$1`
-	row := pg.db.QueryRow(query, url)
+
+	state, stateErr := pg.db.Prepare(query)
+	if stateErr != nil {
+		return "", stateErr
+	}
+	row := state.QueryRow(url)
+
 	var short string
 	err := row.Scan(&short)
 	if err == sql.ErrNoRows {
@@ -38,7 +50,13 @@ func (pg *PostgresRepo) GetByURL(url string) (string, error) {
 
 func (pg *PostgresRepo) Insert(url, short string) error {
 	query := `INSERT INTO links (short, url) values ($1, $2) RETURNING id`
-	_, err := pg.db.Exec(query, short, url)
+
+	state, stateErr := pg.db.Prepare(query)
+	if stateErr != nil {
+		return stateErr
+	}
+
+	_, err := state.Exec(short, url)
 	if err != nil && err != sql.ErrNoRows {
 		return err
 	}
