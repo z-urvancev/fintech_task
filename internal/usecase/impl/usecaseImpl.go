@@ -2,7 +2,7 @@ package impl
 
 import (
 	"fintech/internal/repository"
-	"fintech/internal/usecase/abbreviator"
+	"fintech/pkg/abbreviator"
 	"fintech/pkg/errors"
 )
 
