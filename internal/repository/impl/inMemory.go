@@ -11,7 +11,7 @@ type InMemoryRepo struct {
 }
 
 func NewInMemoryRepo(store map[string]string) *InMemoryRepo {
-	return &InMemoryRepo{store: store}
+	return &InMemoryRepo{store: store, mutex: new(sync.RWMutex)}
 }
 
 func (imr *InMemoryRepo) GetByShort(short string) (string, error) {
