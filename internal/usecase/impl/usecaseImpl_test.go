@@ -3,6 +3,7 @@ package impl
 import (
 	"errors"
 	mock_repository "fintech/internal/repository/mocks"
+	"fintech/pkg/abbreviator"
 	customErrors "fintech/pkg/errors"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -109,7 +110,7 @@ func TestUseCaseImpl_GenerateShortURL(t *testing.T) {
 			mockRepo := mock_repository.NewMockRepository(c)
 
 			testCase.mockBehavior(mockRepo, testCase.url)
-			useCase := UseCaseImpl{repository: mockRepo}
+			useCase := UseCaseImpl{repository: mockRepo, generator: abbreviator.NewAbbreviateGenerator()}
 			_, err := useCase.GenerateShortURL(testCase.url)
 			assert.Equal(t, testCase.expectedErr, err)
 		})
